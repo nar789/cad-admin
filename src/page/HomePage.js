@@ -21,12 +21,16 @@ import UserListPage from "./UserListPage";
 import NoticeList from "./NoticeList";
 import BusinessInfo from "./BusinessInfo";
 import RequestListPage from "./RequestListPage";
+import ProposalListPage from "./ProposalListPage";
+import { useParams } from "react-router-dom";
 
 export default function HomePage() {
+  const params = useParams();
   const [isLogin, setIsLogin] = useState(false);
   const [tab, setTab] = useState(0);
   const handleChange = (event, newValue) => {
-    setTab(newValue);
+    //setTab(newValue);
+    window.location.href = "/" + newValue;
   };
 
   const tabProps = (index) => {
@@ -60,6 +64,9 @@ export default function HomePage() {
 
     if (id != null) {
       setIsLogin(true);
+      if (params.tab) {
+        setTab(Number(params.tab));
+      }
     } else {
       console.log("id is null");
     }
@@ -98,22 +105,16 @@ export default function HomePage() {
                 {...tabProps(1)}
               />
               <Tab
-                label="제안서 관리"
-                icon={<Construction />}
-                iconPosition="start"
-                {...tabProps(2)}
-              />
-              <Tab
                 label="공지사항"
                 icon={<Campaign />}
                 iconPosition="start"
-                {...tabProps(3)}
+                {...tabProps(2)}
               />
               <Tab
                 label="사업자정보"
                 icon={<Storefront />}
                 iconPosition="start"
-                {...tabProps(4)}
+                {...tabProps(3)}
               />
             </Tabs>
           </Box>
@@ -125,12 +126,9 @@ export default function HomePage() {
             <RequestListPage />
           </TabPanel>
           <TabPanel value={tab} index={2}>
-            <UserListPage />
-          </TabPanel>
-          <TabPanel value={tab} index={3}>
             <NoticeList />
           </TabPanel>
-          <TabPanel value={tab} index={4}>
+          <TabPanel value={tab} index={3}>
             <BusinessInfo />
           </TabPanel>
         </Container>

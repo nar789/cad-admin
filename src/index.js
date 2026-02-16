@@ -11,6 +11,10 @@ import NoticeDetail from "./page/NoticeDetail";
 import NoticeUpdate from "./page/NoticeUpdate";
 import UserCreatePage from "./page/UserCreatePage";
 import RequestDetailPage from "./page/RequestDetailPage";
+import RequestCreatePage from "./page/RequestCreatePage";
+import ProposalListPage from "./page/ProposalListPage";
+import ProposalDetailPage from "./page/ProposalDetailPage";
+import ProposalCreatePage from "./page/ProposalCreatePage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +24,10 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
+        element: <HomePage />,
+      },
+      {
+        path: "/:tab",
         element: <HomePage />,
       },
       {
@@ -49,6 +57,22 @@ const router = createBrowserRouter([
       {
         path: "request-detail/:id",
         element: <RequestDetailPage />,
+      },
+      {
+        path: "request-create",
+        element: <RequestCreatePage />,
+      },
+      {
+        path: "proposal/:id",
+        element: <ProposalListPage />,
+      },
+      {
+        path: "proposal-detail/:id",
+        element: <ProposalDetailPage />,
+      },
+      {
+        path: "proposal-create/:id",
+        element: <ProposalCreatePage />,
       },
       /*
       {

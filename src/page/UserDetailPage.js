@@ -22,6 +22,8 @@ export default function UserDetailPage() {
   const address = useRef();
   const phone = useRef();
   const code = useRef();
+  const fileUploadRef = useRef(null);
+  const [preview, setPreview] = useState("");
 
   const [info, setInfo] = useState({
     userId: "",
@@ -54,6 +56,8 @@ export default function UserDetailPage() {
         address.current.value = res.data.address;
         phone.current.value = res.data.phone;
         code.current.value = res.data.code;
+
+        setPreview(res.data.preview);
       });
   };
 
@@ -73,6 +77,7 @@ export default function UserDetailPage() {
       address: address.current.value,
       phone: phone.current.value,
       code: code.current.value,
+      preview: preview,
     };
     console.log(data);
 
@@ -86,6 +91,24 @@ export default function UserDetailPage() {
         window.history.back();
       }
     });
+  };
+
+  const uploadFile = (file) => {
+    const formData = new FormData();
+    formData.append("files", file);
+
+    axios
+      .post(baseUrl + "upload/files", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        transformRequest: [() => formData],
+      })
+      .then((res) => {
+        if (res.data != null) {
+          setPreview(res.data);
+        }
+      });
   };
 
   useEffect(() => {
@@ -110,6 +133,41 @@ export default function UserDetailPage() {
       <Stack sx={{ py: 3 }}>
         <Typography>아이디</Typography>
         <TextField value={info.userId} disabled />
+
+        <Stack direction={"row"} sx={{ mb: 3 }}>
+          <Typography sx={{ mt: 4 }}>대표사진</Typography>
+          <Button
+            variant="contained"
+            sx={{ mt: 3, ml: 3 }}
+            onClick={() => fileUploadRef.current.click()}
+          >
+            불러오기
+            <input
+              style={{ display: "none" }}
+              ref={fileUploadRef}
+              type="file"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  console.log(file.name);
+                  uploadFile(file);
+                }
+              }}
+            />
+          </Button>
+        </Stack>
+
+        {preview !== "" && (
+          <img
+            width={100}
+            height={100}
+            alt="img"
+            onClick={() => {
+              window.open(baseUrl + "uploads/" + preview, "_blank");
+            }}
+            src={baseUrl + "uploads/" + preview}
+          />
+        )}
 
         <Typography sx={{ mt: 2 }}>타입</Typography>
         <RadioGroup

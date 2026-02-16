@@ -27,12 +27,16 @@ export default function LoginPage() {
       const data = JSON.parse(decodeURIComponent(res.data));
       if (data.result === "success") {
         const d = data.info;
-        console.log(d);
-        window.localStorage.setItem("id", d.id);
-        window.localStorage.setItem("userId", d.userId);
-        window.localStorage.setItem("name", d.name);
-        navigate("/");
-        window.location.reload();
+        if (d.userId === "admin") {
+          console.log(d);
+          window.localStorage.setItem("id", d.id);
+          window.localStorage.setItem("userId", d.userId);
+          window.localStorage.setItem("name", d.name);
+          navigate("/");
+          window.location.reload();
+        } else {
+          alert("관리자 권한이 없습니다.");
+        }
       } else {
         alert("아이디 또는 비밀번호가 틀립니다.");
       }

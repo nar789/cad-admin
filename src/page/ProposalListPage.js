@@ -7,6 +7,7 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  Link,
   Stack,
   Table,
   TableBody,
@@ -20,9 +21,12 @@ import {
 import { useEffect, useState } from "react";
 import Config from "../Config";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowBackIosNew, RedoSharp } from "@mui/icons-material";
+import moment from "moment-timezone";
 
-export default function UserListPage() {
+export default function ProposalListPage() {
+  const params = useParams();
   const baseUrl = Config().baseUrl;
   const [list, setList] = useState([]);
   const [open, setOpen] = useState(false);
@@ -31,17 +35,18 @@ export default function UserListPage() {
   const navigate = useNavigate();
 
   const fetchUserList = () => {
-    axios.post(baseUrl + "fetch/users", {}).then((res) => {
+    axios.post(baseUrl + "proposal/get", { rid: params.id }).then((res) => {
       if (res.data === "fail") {
         console.log("fail");
       } else {
+        console.log(res.data);
         setList(res.data);
       }
     });
   };
 
   const deleteUser = () => {
-    axios.post(baseUrl + "admin/delete/user", { id: del.id }).then((res) => {
+    axios.post(baseUrl + "proposal/delete", { id: del.id }).then((res) => {
       if (res.data === "fail") {
         alert("삭제가 실패했습니다.");
         console.log(res.data);
@@ -53,8 +58,37 @@ export default function UserListPage() {
     });
   };
 
+  const getMainHouse = (house) => {
+    console.log("getMainHouse()");
+    if (house == null || house === undefined || house === "") {
+      return "";
+    }
+
+    const hlist = JSON.parse(decodeURIComponent(house));
+
+    if (hlist.length > 0) {
+      return hlist[0];
+    } else {
+      return "";
+    }
+  };
+
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const getStage = (idx) => {
+    if (idx === 1) {
+      return "상담예정";
+    } else if (idx === 2) {
+      return "진행중";
+    } else if (idx === 3) {
+      return "작업완료";
+    }
+  };
+
+  const getDateString = (str) => {
+    return moment.utc(str).tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
   };
 
   useEffect(() => {
@@ -63,6 +97,20 @@ export default function UserListPage() {
 
   return (
     <>
+      <Stack
+        direction="row"
+        sx={{ display: "flex", alignItems: "center", py: 3 }}
+      >
+        <Button
+          onClick={() => {
+            window.history.back();
+          }}
+        >
+          <ArrowBackIosNew sx={{ mr: 1 }} />
+        </Button>
+
+        <Typography variant="h5">제안 목록</Typography>
+      </Stack>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -70,11 +118,11 @@ export default function UserListPage() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {del.userId}님을 삭제하시겠습니까?
+          {del.id}번 제안를 삭제하시겠습니까?
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            회원 삭제 시, 복원이 불가합니다.
+            제안 삭제 시, 복원이 불가합니다.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -102,10 +150,10 @@ export default function UserListPage() {
           variant="contained"
           color="primary"
           onClick={() => {
-            navigate("/user-create");
+            navigate("/proposal-create/" + params.id);
           }}
         >
-          사용자 추가
+          제안 추가
         </Button>
       </Stack>
       <TableContainer sx={{ py: 3 }}>
@@ -113,10 +161,13 @@ export default function UserListPage() {
           <TableHead>
             <TableRow>
               <TableCell>번호</TableCell>
-              <TableCell>아이디</TableCell>
-              <TableCell>타입</TableCell>
-              <TableCell>이름</TableCell>
-              <TableCell>사진</TableCell>
+              <TableCell>사용자ID</TableCell>
+              <TableCell>요청ID</TableCell>
+              <TableCell>금액</TableCell>
+              <TableCell>공사기간</TableCell>
+              <TableCell>채택여부</TableCell>
+              <TableCell>진행상태</TableCell>
+              <TableCell>시간날짜</TableCell>
               <TableCell>수정</TableCell>
               <TableCell>삭제</TableCell>
             </TableRow>
@@ -131,32 +182,37 @@ export default function UserListPage() {
                   <TableCell component="th" scope="row">
                     {item.id}
                   </TableCell>
-                  <TableCell>{item.userId}</TableCell>
                   <TableCell>
-                    {item.company === "" ? "일반회원" : "시공업체"}
+                    <Link
+                      onClick={() => {
+                        navigate("/user-detail/" + item.uid);
+                      }}
+                    >
+                      제안업체{item.uid}번
+                    </Link>
                   </TableCell>
                   <TableCell>
-                    {item.company === "" ? item.name : item.company}
+                    <Link
+                      onClick={() => {
+                        navigate("/request-detail/" + item.rid);
+                      }}
+                    >
+                      {item.rid}번의뢰
+                    </Link>
                   </TableCell>
-                  <TableCell>
-                    {item.preview.indexOf(".") > 0 && (
-                      <img
-                        width={100}
-                        height={100}
-                        alt="img"
-                        src={baseUrl + "uploads/" + item.preview}
-                      />
-                    )}
+                  <TableCell>{Number(item.price).toLocaleString()}</TableCell>
+                  <TableCell>{item.duration}개월</TableCell>
+                  <TableCell>{item.pick === 1 ? "채택" : "미채택"}</TableCell>
+                  <TableCell>{getStage(item.stage)}</TableCell>
+                  <TableCell sx={{ fontSize: 13 }}>
+                    {getDateString(item.updated)}
                   </TableCell>
-                  {/* <TableCell>{item.address}</TableCell>
-                  <TableCell>{item.phone}</TableCell>
-                  <TableCell>{item.code}</TableCell> */}
                   <TableCell>
                     <Button
                       variant="contained"
                       color="info"
                       onClick={() => {
-                        navigate("/user-detail/" + item.id);
+                        navigate("/proposal-detail/" + item.id);
                       }}
                     >
                       수정

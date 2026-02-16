@@ -3,6 +3,7 @@ import {
   Container,
   FormControl,
   FormControlLabel,
+  Hidden,
   Link,
   Radio,
   RadioGroup,
@@ -16,16 +17,16 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Config from "../Config";
 import axios from "axios";
-import moment from "moment-timezone";
 
-export default function RequestDetailPage() {
+export default function RequestCreatePage() {
   const params = useParams();
   const name = useRef(null);
+  const uid = useRef(null);
   const address = useRef(null);
   const phone = useRef(null);
   const [house, setHouse] = useState([]);
   const price = useRef(null);
-  const [type, setType] = useState(0);
+  const [type, setType] = useState(1);
   const [cad, setCad] = useState([]);
   const content = useRef(null);
 
@@ -43,30 +44,7 @@ export default function RequestDetailPage() {
     code: "",
   });
   const baseUrl = Config().baseUrl;
-  const fetchUserDetail = (id) => {
-    axios
-      .post(baseUrl + "request/get-by-id", {
-        id: id,
-      })
-      .then((res) => {
-        console.log(res.data);
-        if (res.data === "fail") {
-          alert("유저 정보 로드가 실패했습니다.");
-          return;
-        }
-        setInfo(res.data);
-        address.current.value = res.data.address;
-        fetchHouse(res.data.house);
-        price.current.value = res.data.price;
-        setType(res.data.type);
-        if (res.data.cad.indexOf(".") > 0) {
-          setCad(JSON.parse(decodeURIComponent(res.data.cad)));
-        }
-        content.current.value = decodeURIComponent(res.data.content);
-        name.current.value = res.data.name;
-        phone.current.value = res.data.phone;
-      });
-  };
+  const fetchUserDetail = (id) => {};
 
   const fetchHouse = (house) => {
     console.log("getMainHouse()");
@@ -85,31 +63,28 @@ export default function RequestDetailPage() {
 
   const update = () => {
     let data = {
-      id: info.id,
+      uid: uid.current.value,
       name: name.current.value,
       address: address.current.value,
       phone: phone.current.value,
-      price: price.current.value,
+      content: encodeURIComponent(content.current.value),
       type: type,
+      price: price.current.value,
       house: encodeURIComponent(JSON.stringify(house)),
       cad: encodeURIComponent(JSON.stringify(cad)),
     };
     console.log(data);
 
-    axios.post(baseUrl + "request/update", data).then((res) => {
+    axios.post(baseUrl + "order", data).then((res) => {
       if (res.data === "fail") {
         console.log(res.data);
-        alert("수정이 실패했습니다.");
+        alert("추가가 실패했습니다.");
         return;
       } else {
-        alert("수정이 완료되었습니다.");
-        window.location.reload();
+        alert("추가가 완료되었습니다.");
+        window.history.back();
       }
     });
-  };
-
-  const getDateString = (str) => {
-    return moment.utc(str).tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
   };
 
   const appendHouse = (f) => {
@@ -119,26 +94,6 @@ export default function RequestDetailPage() {
 
     console.log(newH);
     setHouse(newH);
-  };
-
-  const rmHouse = (idx) => {
-    const newH = [];
-    house.forEach((item, i) => {
-      if (idx != i) {
-        newH.push(item);
-      }
-    });
-    setHouse(newH);
-  };
-
-  const rmCad = (idx) => {
-    const newC = [];
-    cad.forEach((item, i) => {
-      if (idx != i) {
-        newC.push(item);
-      }
-    });
-    setCad(newC);
   };
 
   const appendCad = (f) => {
@@ -202,39 +157,21 @@ export default function RequestDetailPage() {
           <ArrowBackIosNew sx={{ mr: 1 }} />
         </Button>
 
-        <Typography variant="h5">의뢰 정보 수정</Typography>
-      </Stack>
-
-      <Stack direction={"row"} justifyContent={"end"}>
-        <Typography sx={{ fontSize: 13 }}>
-          마지막 업데이트 : {getDateString(info.updated)}
-        </Typography>
+        <Typography variant="h5">의뢰 추가</Typography>
       </Stack>
 
       <Stack sx={{ py: 3 }}>
-        <Typography>ID : {info.id}</Typography>
-        <Stack direction={"row"}>
-          <Typography sx={{ mt: 2 }}>사용자 ID : {info.uid}</Typography>
-
-          <Button
-            sx={{ ml: 3 }}
-            variant="contained"
-            color="info"
-            size="large"
-            onClick={() => navigate("/user-detail/" + info.uid)}
-          >
-            사용자 정보
-          </Button>
-        </Stack>
+        <Typography sx={{ mt: 2 }}>사용자 고유번호 :</Typography>
+        <TextField inputRef={uid} />
 
         <Typography sx={{ mt: 2 }}>주소</Typography>
         <TextField inputRef={address} />
 
         <Stack direction={"row"}>
-          <Typography sx={{ mt: 4 }}>내부 사진</Typography>
+          <Typography sx={{ mt: 5, mr: 3 }}>내부 사진</Typography>
           <Button
             variant="contained"
-            sx={{ mt: 3, ml: 3 }}
+            sx={{ mt: 3 }}
             onClick={() => fileUploadRef.current.click()}
           >
             불러오기
@@ -252,21 +189,19 @@ export default function RequestDetailPage() {
             />
           </Button>
         </Stack>
+
         <Stack direction={"row"} sx={{ mt: 1 }} spacing={1}>
           {house.map((item, idx) => (
-            <Stack>
-              <img
-                key={idx}
-                width={100}
-                height={100}
-                alt="img"
-                onClick={() => {
-                  window.open(baseUrl + "uploads/" + item, "_blank");
-                }}
-                src={baseUrl + "uploads/" + item}
-              />
-              <Button onClick={() => rmHouse(idx)}>삭제</Button>
-            </Stack>
+            <img
+              key={idx}
+              width={100}
+              height={100}
+              alt="img"
+              onClick={() => {
+                window.open(baseUrl + "uploads/" + item, "_blank");
+              }}
+              src={baseUrl + "uploads/" + item}
+            />
           ))}
         </Stack>
 
@@ -291,10 +226,10 @@ export default function RequestDetailPage() {
         </RadioGroup>
 
         <Stack direction={"row"}>
-          <Typography sx={{ mt: 4 }}>캐드파일</Typography>
+          <Typography sx={{ mt: 5, mr: 3 }}>캐드파일</Typography>
           <Button
             variant="contained"
-            sx={{ mt: 3, ml: 3 }}
+            sx={{ mt: 3 }}
             onClick={() => fileUploadRef2.current.click()}
           >
             불러오기
@@ -312,24 +247,20 @@ export default function RequestDetailPage() {
             />
           </Button>
         </Stack>
-        <Stack sx={{ mt: 3 }} spacing={1}>
+        <Stack direction={"row"} sx={{ mt: 3 }}>
           {cad.map((item, idx) => (
-            <Stack direction={"row"} spacing={1}>
-              <Button
-                key={idx}
-                className="w-3"
-                sx={{ ml: 3 }}
-                variant="contained"
-                color="secondary"
-                size="large"
-                onClick={() => {
-                  window.open(baseUrl + "uploads/" + item, "_blank");
-                }}
-              >
-                {item}
-              </Button>
-              <Button onClick={() => rmCad(idx)}>삭제</Button>
-            </Stack>
+            <Button
+              key={idx}
+              sx={{ ml: 3 }}
+              variant="contained"
+              color="info"
+              size="large"
+              onClick={() => {
+                window.open(baseUrl + "uploads/" + item, "_blank");
+              }}
+            >
+              {item}
+            </Button>
           ))}
         </Stack>
 
@@ -339,7 +270,6 @@ export default function RequestDetailPage() {
           maxRows={20}
           style={{ fontSize: 20, marginTop: 20 }}
           ref={content}
-          disabled
         />
 
         <Typography sx={{ mt: 2 }}>이름</Typography>
@@ -355,7 +285,7 @@ export default function RequestDetailPage() {
           size="large"
           onClick={() => update()}
         >
-          수정하기
+          추가하기
         </Button>
       </Stack>
     </Container>

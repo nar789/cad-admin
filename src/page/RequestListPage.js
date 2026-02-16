@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import Config from "../Config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import moment from "moment-timezone";
 
 export default function RequestListPage() {
   const baseUrl = Config().baseUrl;
@@ -42,7 +43,7 @@ export default function RequestListPage() {
   };
 
   const deleteUser = () => {
-    axios.post(baseUrl + "admin/delete/user", { id: del.id }).then((res) => {
+    axios.post(baseUrl + "request/delete", { id: del.id }).then((res) => {
       if (res.data === "fail") {
         alert("삭제가 실패했습니다.");
         console.log(res.data);
@@ -55,7 +56,6 @@ export default function RequestListPage() {
   };
 
   const getMainHouse = (house) => {
-    console.log("getMainHouse()");
     if (house == null || house === undefined || house === "") {
       return "";
     }
@@ -67,6 +67,10 @@ export default function RequestListPage() {
     } else {
       return "";
     }
+  };
+
+  const getDateString = (str) => {
+    return moment.utc(str).tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
   };
 
   const handleClose = () => {
@@ -86,11 +90,11 @@ export default function RequestListPage() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {del.userId}님을 삭제하시겠습니까?
+          {del.id}번 의뢰를 삭제하시겠습니까?
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            회원 삭제 시, 복원이 불가합니다.
+            요청 의뢰 삭제 시, 복원이 불가합니다.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -118,7 +122,7 @@ export default function RequestListPage() {
           variant="contained"
           color="primary"
           onClick={() => {
-            navigate("/user-create");
+            navigate("/request-create");
           }}
         >
           의뢰 추가
@@ -133,10 +137,11 @@ export default function RequestListPage() {
               <TableCell>주소</TableCell>
               <TableCell>대표이미지</TableCell>
               <TableCell>총예산</TableCell>
-              <TableCell>타입</TableCell>
+              {/* <TableCell>타입</TableCell>
               <TableCell>이름</TableCell>
-              <TableCell>폰</TableCell>
+              <TableCell>폰</TableCell> */}
               <TableCell>시간날짜</TableCell>
+              <TableCell>제안목록</TableCell>
               <TableCell>수정</TableCell>
               <TableCell>삭제</TableCell>
             </TableRow>
@@ -149,7 +154,7 @@ export default function RequestListPage() {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {idx + 1}
+                    {item.id}
                   </TableCell>
                   <TableCell>
                     <Link
@@ -157,7 +162,7 @@ export default function RequestListPage() {
                         navigate("/user-detail/" + item.uid);
                       }}
                     >
-                      {item.uid}
+                      {item.uid}번유저
                     </Link>
                   </TableCell>
                   <TableCell>{item.address}</TableCell>
@@ -166,21 +171,37 @@ export default function RequestListPage() {
                       <img
                         width={100}
                         height={100}
+                        alt="img"
                         src={baseUrl + "uploads/" + getMainHouse(item.house)}
                       />
                     )}
                   </TableCell>
                   <TableCell>{Number(item.price).toLocaleString()}</TableCell>
-                  <TableCell>{item.type}</TableCell>
+                  {/* <TableCell>{item.type}</TableCell>
                   <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.phone}</TableCell>
-                  <TableCell>{item.updated}</TableCell>
+                  <TableCell>{item.phone}</TableCell> */}
+                  <TableCell sx={{ fontSize: 13 }}>
+                    {getDateString(item.updated)}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        navigate("/proposal/" + item.id);
+                      }}
+                    >
+                      제안
+                      <br />
+                      목록
+                    </Button>
+                  </TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
                       color="info"
                       onClick={() => {
-                        navigate("request-detail/" + item.id);
+                        navigate("/request-detail/" + item.id);
                       }}
                     >
                       수정
