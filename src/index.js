@@ -18,7 +18,7 @@ import ProposalCreatePage from "./page/ProposalCreatePage";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/admin",
     element: <App />,
     //    errorElement: <ErrorPage />,
     children: [
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/:tab",
+        path: ":tab",
         element: <HomePage />,
       },
       {
