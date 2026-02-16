@@ -30,7 +30,7 @@ export default function HomePage() {
   const [tab, setTab] = useState(0);
   const handleChange = (event, newValue) => {
     //setTab(newValue);
-    window.location.href = "/" + newValue;
+    window.location.href = "/admin/" + newValue;
   };
 
   const tabProps = (index) => {

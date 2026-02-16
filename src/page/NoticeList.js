@@ -103,7 +103,7 @@ export default function NoticeList() {
         <Button
           variant="contained"
           onClick={() => {
-            navigate("/notice-write");
+            navigate("/admin/notice-write");
           }}
         >
           새로 작성
@@ -145,7 +145,9 @@ export default function NoticeList() {
                         size="large"
                         fullWidth
                         variant="contained"
-                        onClick={() => navigate("/notice-detail/" + item.id)}
+                        onClick={() =>
+                          navigate("/admin/notice-detail/" + item.id)
+                        }
                       >
                         내용보기
                       </Button>
@@ -159,7 +161,9 @@ export default function NoticeList() {
                       <Button
                         variant="contained"
                         color="info"
-                        onClick={() => navigate("/notice-update/" + item.id)}
+                        onClick={() =>
+                          navigate("/admin/notice-update/" + item.id)
+                        }
                       >
                         수정
                       </Button>

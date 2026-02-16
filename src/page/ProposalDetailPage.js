@@ -192,7 +192,7 @@ export default function ProposalDetailPage() {
             variant="contained"
             color="info"
             size="large"
-            onClick={() => navigate("/user-detail/" + info.uid)}
+            onClick={() => navigate("/admin/user-detail/" + info.uid)}
           >
             시공업체정보
           </Button>
@@ -206,7 +206,7 @@ export default function ProposalDetailPage() {
             variant="contained"
             color="info"
             size="large"
-            onClick={() => navigate("/request-detail/" + info.rid)}
+            onClick={() => navigate("/admin/request-detail/" + info.rid)}
           >
             의뢰 내용
           </Button>

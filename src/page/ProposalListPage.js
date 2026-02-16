@@ -150,7 +150,7 @@ export default function ProposalListPage() {
           variant="contained"
           color="primary"
           onClick={() => {
-            navigate("/proposal-create/" + params.id);
+            navigate("/admin/proposal-create/" + params.id);
           }}
         >
           제안 추가
@@ -185,7 +185,7 @@ export default function ProposalListPage() {
                   <TableCell>
                     <Link
                       onClick={() => {
-                        navigate("/user-detail/" + item.uid);
+                        navigate("/admin/user-detail/" + item.uid);
                       }}
                     >
                       제안업체{item.uid}번
@@ -194,7 +194,7 @@ export default function ProposalListPage() {
                   <TableCell>
                     <Link
                       onClick={() => {
-                        navigate("/request-detail/" + item.rid);
+                        navigate("/admin/request-detail/" + item.rid);
                       }}
                     >
                       {item.rid}번의뢰
@@ -212,7 +212,7 @@ export default function ProposalListPage() {
                       variant="contained"
                       color="info"
                       onClick={() => {
-                        navigate("/proposal-detail/" + item.id);
+                        navigate("/admin/proposal-detail/" + item.id);
                       }}
                     >
                       수정

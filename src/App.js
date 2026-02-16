@@ -32,7 +32,7 @@ function App() {
   };
 
   const onMyInfo = () => {
-    navigate("/user-detail/0");
+    navigate("/admin/user-detail/0");
     handleClose();
   };
 
@@ -46,7 +46,7 @@ function App() {
     window.localStorage.removeItem("id");
     window.localStorage.removeItem("userId");
     window.localStorage.removeItem("name");
-    navigate("/");
+    navigate("/admin");
     handleClose();
   };
 
@@ -89,7 +89,7 @@ function App() {
               <Button
                 sx={{ m: 0, p: 0 }}
                 onClick={() => {
-                  navigate("/");
+                  navigate("/admin");
                 }}
               >
                 <img src={banner} alt="banner" width={100} />
@@ -162,7 +162,7 @@ function App() {
                       variant="outlined"
                       color="primary"
                       sx={{ mr: 2 }}
-                      onClick={() => navigate("/login")}
+                      onClick={() => navigate("/admin/login")}
                     >
                       로그인
                     </Button>

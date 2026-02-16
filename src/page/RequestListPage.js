@@ -122,7 +122,7 @@ export default function RequestListPage() {
           variant="contained"
           color="primary"
           onClick={() => {
-            navigate("/request-create");
+            navigate("/admin/request-create");
           }}
         >
           의뢰 추가
@@ -159,7 +159,7 @@ export default function RequestListPage() {
                   <TableCell>
                     <Link
                       onClick={() => {
-                        navigate("/user-detail/" + item.uid);
+                        navigate("/admin/user-detail/" + item.uid);
                       }}
                     >
                       {item.uid}번유저
@@ -188,7 +188,7 @@ export default function RequestListPage() {
                       variant="contained"
                       color="secondary"
                       onClick={() => {
-                        navigate("/proposal/" + item.id);
+                        navigate("/admin/proposal/" + item.id);
                       }}
                     >
                       제안
@@ -201,7 +201,7 @@ export default function RequestListPage() {
                       variant="contained"
                       color="info"
                       onClick={() => {
-                        navigate("/request-detail/" + item.id);
+                        navigate("/admin/request-detail/" + item.id);
                       }}
                     >
                       수정

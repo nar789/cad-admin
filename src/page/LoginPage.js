@@ -32,7 +32,7 @@ export default function LoginPage() {
           window.localStorage.setItem("id", d.id);
           window.localStorage.setItem("userId", d.userId);
           window.localStorage.setItem("name", d.name);
-          navigate("/");
+          navigate("/admin");
           window.location.reload();
         } else {
           alert("관리자 권한이 없습니다.");

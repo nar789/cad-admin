@@ -221,7 +221,7 @@ export default function RequestDetailPage() {
             variant="contained"
             color="info"
             size="large"
-            onClick={() => navigate("/user-detail/" + info.uid)}
+            onClick={() => navigate("/admin/user-detail/" + info.uid)}
           >
             사용자 정보
           </Button>

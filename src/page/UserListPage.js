@@ -102,7 +102,7 @@ export default function UserListPage() {
           variant="contained"
           color="primary"
           onClick={() => {
-            navigate("/user-create");
+            navigate("/admin/user-create");
           }}
         >
           사용자 추가
@@ -156,7 +156,7 @@ export default function UserListPage() {
                       variant="contained"
                       color="info"
                       onClick={() => {
-                        navigate("/user-detail/" + item.id);
+                        navigate("/admin/user-detail/" + item.id);
                       }}
                     >
                       수정
