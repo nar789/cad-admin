@@ -271,6 +271,11 @@ export default function ProposalDetailPage() {
         >
           <FormControlLabel value="0" control={<Radio />} label="미채택" />
           <FormControlLabel value="1" control={<Radio />} label="채택" />
+          <FormControlLabel
+            value="-1"
+            control={<Radio />}
+            label="부적격 숨김"
+          />
         </RadioGroup>
 
         <Typography sx={{ mt: 5, mb: 2 }}>진행상태</Typography>

@@ -35,14 +35,16 @@ export default function ProposalListPage() {
   const navigate = useNavigate();
 
   const fetchUserList = () => {
-    axios.post(baseUrl + "proposal/get", { rid: params.id }).then((res) => {
-      if (res.data === "fail") {
-        console.log("fail");
-      } else {
-        console.log(res.data);
-        setList(res.data);
-      }
-    });
+    axios
+      .post(baseUrl + "proposal/get-for-admin", { rid: params.id })
+      .then((res) => {
+        if (res.data === "fail") {
+          console.log("fail");
+        } else {
+          console.log(res.data);
+          setList(res.data);
+        }
+      });
   };
 
   const deleteUser = () => {
@@ -84,6 +86,16 @@ export default function ProposalListPage() {
       return "진행중";
     } else if (idx === 3) {
       return "작업완료";
+    }
+  };
+
+  const getPick = (status) => {
+    if (status === 1) {
+      return "채택";
+    } else if (status === 0) {
+      return "미채택";
+    } else if (status === -1) {
+      return "부적격";
     }
   };
 
@@ -202,7 +214,7 @@ export default function ProposalListPage() {
                   </TableCell>
                   <TableCell>{Number(item.price).toLocaleString()}</TableCell>
                   <TableCell>{item.duration}개월</TableCell>
-                  <TableCell>{item.pick === 1 ? "채택" : "미채택"}</TableCell>
+                  <TableCell>{getPick(item.pick)}</TableCell>
                   <TableCell>{getStage(item.stage)}</TableCell>
                   <TableCell sx={{ fontSize: 13 }}>
                     {getDateString(item.updated)}
